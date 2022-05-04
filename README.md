@@ -1,6 +1,9 @@
 # TFE_airgap
 Install TFE on Prod version External Services ( S3 + DB ) with Valid Certificate - AWS install with airgap
 
+# Diagram
+
+![](diagram/diagram-airgap.png)  
 
 # Steps to do
 
@@ -20,6 +23,11 @@ Install TFE on Prod version External Services ( S3 + DB ) with Valid Certificate
       - airgap software
       - license
       - TLS certificates
+      - Download the installer bootstrapper
 - [ ] point dns name to public ip address
 - [ ] install TFE
 - [ ] create a TFE user organization and workspace to test the functionality
+
+
+# notes and links
+[EC2 AWS bucket access](https://aws.amazon.com/premiumsupport/knowledge-center/ec2-instance-access-s3-bucket/)
