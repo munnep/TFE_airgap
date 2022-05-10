@@ -6,7 +6,7 @@ from diagrams.aws.storage import SimpleStorageServiceS3Bucket
 from diagrams.aws.database import RDSPostgresqlInstance
 
 # Variables
-title = "VPC with 1 public subnet for the TFE server and 1 private subnet for the PostgreSQL instance."
+title = "VPC with 1 public subnet for the TFE server and\n 2 private subnet in different AZ for the PostgreSQL instance requirement."
 outformat = "png"
 filename = "diagram-airgap"
 direction = "TB"
@@ -27,14 +27,17 @@ with Diagram(
         with Cluster("vpc"):
             igw_gateway = InternetGateway("igw")
     
-            with Cluster("Availability Zone: us-west-3a"):
+            with Cluster("Availability Zone: eu-north-1b"):        
+                # Subcluster
+                with Cluster("subnet_private2"):
+                    postgresql2 = RDSPostgresqlInstance("RDS different AZ")
+            with Cluster("Availability Zone: eu-north-1a"):
                 # Subcluster 
                 with Cluster("subnet_public1"):
                      ec2_tfe_server = EC2("TFE_server")
                 # Subcluster
                 with Cluster("subnet_private1"):
                     postgresql = RDSPostgresqlInstance("RDS Instance")
- 
     # Diagram
     user >> ec2_tfe_server 
 
