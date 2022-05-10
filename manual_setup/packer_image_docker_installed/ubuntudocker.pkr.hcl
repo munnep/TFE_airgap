@@ -1,6 +1,6 @@
 variable "region" {
   type    = string
-  default = "us-west-2"
+  default = "eu-north-1"
 }
 
 packer {
@@ -14,7 +14,7 @@ packer {
 
 source "amazon-ebs" "ubuntudocker" {
   ami_name      = "ubuntudocker"
-  instance_type = "t2.micro"
+  instance_type = "t3.small"
   region        = "${var.region}"
   source_ami_filter {
     filters = {

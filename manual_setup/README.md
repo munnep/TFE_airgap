@@ -1,6 +1,36 @@
 # manual steps for creating a TFE airgap installation
 
-- make sure you have created the ubuntu image with docker you can use
+## image with docker software
+- make sure you have created the ubuntu image with docker you can use 
+
+## network related
+- Create a VPC with cidr block 10.233.0.0/16
+![](media/20220510091839.png)    
+- Create 2 subnets. 1 public subnets and 1 private subnet
+patrick-public1-subnet (ip: 10.233.1.0/24 availability zone: eu-north-1a)
+patrick-private-subnet (ip: 10.233.11.0/24 availability zone: eu-north-1a)
+![](media/20220510092408.png)      
+![](media/20220510092442.png)   
+- create an internet gateway
+![](media/20220510092528.png)    
+![](media/20220510092604.png)    
+- create routing table for public
+ ![](media/20220510092733.png)    
+- add the route to the subnet
+![](media/20220510092853.png)    
+- create a security group that allows ssh, https and replicated admin portal from your own machine
+![](media/20220510094855.png)   
+
+## create the instance
+- create an instance using the ubuntu image with docker installed
+using AMI: ami-039a9e6a0ebccb34b
+![](media/20220510100253.png)     
+![](media/20220510100334.png)      
+![](media/20220510100404.png)      
+
+## create the RDS postgresql instance
+
+
 
 
 ## Packer ubuntu with docker installation
@@ -21,11 +51,11 @@ packer build .
 
 # done
 - [x] Create an AWS image to use with correct disk size and Docker software installed
+- [x] build network according to the diagram
 
 
 
 # To do
-- [ ] build network according to the diagram
 - [ ] Create an AWS bucket
 - [ ] Create an AWS RDS PostgreSQL
 - [ ] Create a valid certificate to use 
