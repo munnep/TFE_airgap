@@ -1,8 +1,30 @@
+# manual steps for creating a TFE airgap installation
+
+- make sure you have created the ubuntu image with docker you can use
+
+
+## Packer ubuntu with docker installation
+- go to directory packer_image_docker_installed
+```
+cd packer_image_docker_installed
+```
+- initialize packer
+```
+packer init .
+```
+- build the image
+```
+packer build .
+```
+- Check in AWS console you have the image
+![](media/20220510091219.png)  
+
+# done
+- [x] Create an AWS image to use with correct disk size and Docker software installed
 
 
 
 # To do
-- [ ] Create an AWS image to use with correct disk size and Docker software installed
 - [ ] build network according to the diagram
 - [ ] Create an AWS bucket
 - [ ] Create an AWS RDS PostgreSQL
