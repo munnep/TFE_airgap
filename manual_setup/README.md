@@ -92,6 +92,16 @@ ubuntu@ip-10-233-1-81:~$ aws s3 cp test.txt s3://patrick-tfe-manual/test.txt
 upload: ./test.txt to s3://patrick-tfe-manual/test.txt
 ```
 
+## create the certificate TLS to use
+dns: patrick-tfe.bg.hashicorp-success.com
+
+used the following manual to create it: https://github.com/munnep/nginx_create_certificates
+```
+certbot -d patrick-tfe.bg.hashicorp-success.com --manual --preferred-challenges dns certonly
+```
+files stored under ../certificates/
+
+
 
 
 ## Packer ubuntu with docker installation
@@ -115,12 +125,12 @@ packer build .
 - [x] build network according to the diagram
 - [x] Create an AWS RDS PostgreSQL
 - [x] Create an AWS bucket
+- [x] Create a valid certificate to use 
+- [x] Get an Airgap software download
 
 
 
 # To do
-- [ ] Create a valid certificate to use 
-- [ ] Get an Airgap software download
 - [ ] create a virtual machine in a public network with public IP address.
     - [ ] firewall inbound are all from user building external ip
     - [ ] firewall outbound rules
