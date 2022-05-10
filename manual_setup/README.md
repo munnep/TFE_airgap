@@ -40,6 +40,57 @@ using AMI: ami-039a9e6a0ebccb34b
 ![](media/20220510101553.png)    
 endpoint: patrick-manual-tfe.cvwddldymexr.eu-north-1.rds.amazonaws.com
 
+# AWS to use
+- create a bucket patrick-tfe-manual  
+![](media/20220510102447.png)  
+![](media/20220510102555.png)  
+![](media/20220510102746.png)      
+
+aws s3 cp test.txt s3://patrick-tfe-manual/test.txt
+
+- create policy to access the bucket from the created instance
+![](media/20220510103135.png)    
+- create a new policy
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:DeleteObject",
+                "s3:GetBucketLocation"
+            ],
+            "Resource": [
+                "arn:aws:s3:::patrick-tfe-manual",
+                "arn:aws:s3:::*/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "s3:ListAllMyBuckets",
+            "Resource": "*"
+        }
+    ]
+}
+```
+![](media/20220510103614.png)    
+![](media/20220510103732.png)    
+![](media/20220510103905.png)    
+![](media/20220510103917.png)    
+
+- attach the role to the instance
+![](media/20220510104028.png)    
+- you should now be able to upload a file to the s3 bucket
+```
+ubuntu@ip-10-233-1-81:~$ aws s3 cp test.txt s3://patrick-tfe-manual/test.txt
+upload: ./test.txt to s3://patrick-tfe-manual/test.txt
+```
 
 
 
@@ -63,11 +114,11 @@ packer build .
 - [x] Create an AWS image to use with correct disk size and Docker software installed
 - [x] build network according to the diagram
 - [x] Create an AWS RDS PostgreSQL
+- [x] Create an AWS bucket
 
 
 
 # To do
-- [ ] Create an AWS bucket
 - [ ] Create a valid certificate to use 
 - [ ] Get an Airgap software download
 - [ ] create a virtual machine in a public network with public IP address.
