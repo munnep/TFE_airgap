@@ -9,6 +9,7 @@
 - Create 2 subnets. 1 public subnets and 1 private subnet
 patrick-public1-subnet (ip: 10.233.1.0/24 availability zone: eu-north-1a)
 patrick-private-subnet (ip: 10.233.11.0/24 availability zone: eu-north-1a)
+patrick-private2-subnet (ip: 10.233.11.0/24 availability zone: eu-north-1b)
 ![](media/20220510092408.png)      
 ![](media/20220510092442.png)   
 - create an internet gateway
@@ -18,7 +19,7 @@ patrick-private-subnet (ip: 10.233.11.0/24 availability zone: eu-north-1a)
  ![](media/20220510092733.png)    
 - add the route to the subnet
 ![](media/20220510092853.png)    
-- create a security group that allows ssh, https and replicated admin portal from your own machine
+- create a security group that allows ssh, https,replicated admin portal and postgresql 5432 from your own machine
 ![](media/20220510094855.png)   
 
 ## create the instance
@@ -29,6 +30,15 @@ using AMI: ami-039a9e6a0ebccb34b
 ![](media/20220510100404.png)      
 
 ## create the RDS postgresql instance
+- PostgreSQL instance version 12
+![](media/20220510101100.png)    
+![](media/20220510101136.png)    
+![](media/20220510101233.png)    
+![](media/20220510101410.png)    
+![](media/20220510101442.png)    
+![](media/20220510101522.png)    
+![](media/20220510101553.png)    
+endpoint: patrick-manual-tfe.cvwddldymexr.eu-north-1.rds.amazonaws.com
 
 
 
@@ -52,12 +62,12 @@ packer build .
 # done
 - [x] Create an AWS image to use with correct disk size and Docker software installed
 - [x] build network according to the diagram
+- [x] Create an AWS RDS PostgreSQL
 
 
 
 # To do
 - [ ] Create an AWS bucket
-- [ ] Create an AWS RDS PostgreSQL
 - [ ] Create a valid certificate to use 
 - [ ] Get an Airgap software download
 - [ ] create a virtual machine in a public network with public IP address.
