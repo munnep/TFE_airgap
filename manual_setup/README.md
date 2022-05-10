@@ -21,7 +21,7 @@ patrick-private2-subnet (ip: 10.233.12.0/24 availability zone: eu-north-1b)
  ![](media/20220510092733.png)    
 - add the route to the subnet
 ![](media/20220510092853.png)    
-- create a security group that allows ssh, https,replicated admin portal and postgresql 5432 from your own machine
+- create a security group that allows ssh, https,replicated admin portal from your own machine and port 5432 from the TFE environment itself and https from TFE to itself on FQDN
 ![](media/20220510094855.png)   
 
 ## create the instance
