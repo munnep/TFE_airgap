@@ -1,38 +1,77 @@
 # manual steps for creating a TFE airgap installation
 
+This document describes the manual steps to install TFE in AWS with a public IP address and an airgap installation. 
 
 
 ## image with docker software
-- make sure you have created the ubuntu image with docker you can use 
 
-## network related
-- Create a VPC with cidr block 10.233.0.0/16
+We don't want to download and software with the airgap installation instance. For this we create an image that has docker software installed that we can use. We build this image using packer. 
+
+- go to directory packer_image_docker_installed
+```
+cd packer_image_docker_installed
+```
+- initialize packer
+```
+packer init .
+```
+- build the image
+```
+packer build .
+```
+- Check in AWS console you have the image
+![](media/20220510091219.png)  
+
+
+## Network
+
+We create a network according to the following diagram
+![](diagram/diagram-airgap.png)  
+
+
+- Create a VPC with cidr block 10.233.0.0/16  
 ![](media/20220510091839.png)    
 - Create 2 subnets. 1 public subnets and 1 private subnet
 patrick-public1-subnet (ip: 10.233.1.0/24 availability zone: eu-north-1a)
-patrick-private-subnet (ip: 10.233.11.0/24 availability zone: eu-north-1a)
-patrick-private2-subnet (ip: 10.233.12.0/24 availability zone: eu-north-1b)
+patrick-private1-subnet (ip: 10.233.11.0/24 availability zone: eu-north-1a)
+patrick-private2-subnet (ip: 10.233.12.0/24 availability zone: eu-north-1b)  
 ![](media/20220510092408.png)      
 ![](media/20220510092442.png)   
-- create an internet gateway
-![](media/20220510092528.png)    
+![](media/20220510153423.png)  
+- create an internet gateway  
+![](media/20220510092528.png)  
+- attach it to the created VPC  
 ![](media/20220510092604.png)    
 - create routing table for public
  ![](media/20220510092733.png)    
-- add the route to the subnet
+- add the route to the public subnet
 ![](media/20220510092853.png)    
-- create a security group that allows ssh, https,replicated admin portal from your own machine and port 5432 from the TFE environment itself and https from TFE to itself on FQDN
-![](media/20220510094855.png)   
+- Generate a public IP address that we will associate with the TFE instance later.   
+![](media/20220510153902.png)  
+![](media/20220510153959.png)    
+
+- create a security group that allows 
+everything from your own machine   
+port 5432 from the internal network   
+https from TFE public IP to itself  
+![](media/20220510154439.png)    
 
 ## create the instance
 - create an instance using the ubuntu image with docker installed
 using AMI: ami-039a9e6a0ebccb34b
+instance type: t3.large
 ![](media/20220510100253.png)     
 ![](media/20220510100334.png)      
 ![](media/20220510100404.png)      
+- assign the public ip address to the instance   
+![](media/20220510155124.png)    
+![](media/20220510155157.png)    
+
 
 ## create the RDS postgresql instance
-- PostgreSQL instance version 12
+Creating the RDS postgreSQL instance to use with TFE instance
+
+- PostgreSQL instance version 12    
 ![](media/20220510101100.png)    
 ![](media/20220510101136.png)    
 ![](media/20220510101233.png)    
@@ -50,8 +89,7 @@ endpoint: patrick-manual-tfe.cvwddldymexr.eu-north-1.rds.amazonaws.com
 
 aws s3 cp test.txt s3://patrick-tfe-manual/test.txt
 
-- create policy to access the bucket from the created instance
-![](media/20220510103135.png)    
+- create IAM policy to access the bucket from the created instance
 - create a new policy
 ```
 {
@@ -81,12 +119,12 @@ aws s3 cp test.txt s3://patrick-tfe-manual/test.txt
     ]
 }
 ```
-![](media/20220510103614.png)    
-![](media/20220510103732.png)    
-![](media/20220510103905.png)    
-![](media/20220510103917.png)    
 
-- attach the role to the instance
+- create a new role  
+![](media/20220510160118.png)    
+![](media/20220510160131.png)    
+- attach the role to the instance  
+![](media/20220510160613.png)  
 ![](media/20220510104028.png)    
 - you should now be able to upload a file to the s3 bucket
 ```
@@ -103,10 +141,15 @@ certbot -d patrick-tfe.bg.hashicorp-success.com --manual --preferred-challenges 
 ```
 files stored under ../certificates/
 
+## DNS pointer
+point the DNS record to the public IP address of the instance with route53  
+![](media/20220510161223.png)  
+
+
 ## copy installation files
 - copy installation files to your ec2 instance
 ```
-scp -r * ubuntu@13.53.70.56:/tmp/
+scp -r * ubuntu@13.53.254.90:/tmp/
 
 Terraform Enterprise - 610.airgap                                                    100% 1372MB  10.7MB/s   02:07    
 chain.pem                                                                            100% 3750   147.2KB/s   00:00    
@@ -117,7 +160,7 @@ license.rli                                                                     
 replicated.tar.gz                                                                    100% 1078MB  10.6MB/s   01:42    
 ```
 
-## change hostname
+## change hostname of your TFE instance
 ```
 sudo hostnamectl set-hostname patrick-tfe
 ```
@@ -130,7 +173,7 @@ sudo mkdir /opt/tfe
 ```
 - move the replicated installer
 ```
-sudo cmv /tmp/replicated.tar.gz /opt/tfe
+sudo mv /tmp/replicated.tar.gz /opt/tfe
 ```
 - untar replicated installer
 ```
@@ -196,21 +239,24 @@ Save settings
 
 
 
-## Packer ubuntu with docker installation
-- go to directory packer_image_docker_installed
-```
-cd packer_image_docker_installed
-```
-- initialize packer
-```
-packer init .
-```
-- build the image
-```
-packer build .
-```
-- Check in AWS console you have the image
-![](media/20220510091219.png)  
+
+
+# REMOVE everything
+
+- ec2 instance
+- rds instance
+- aws s3 bucket
+- policie and role
+- subnets
+- route table
+- gateway
+- bpc
+
+
+
+
+
+
 
 # done
 - [x] Create an AWS image to use with correct disk size and Docker software installed
@@ -219,6 +265,7 @@ packer build .
 - [x] Create an AWS bucket
 - [x] Create a valid certificate to use 
 - [x] Get an Airgap software download
+- [ ] create an elastic IP to attach to the instance
 - [x] create a virtual machine in a public network with public IP address.
     - [x] firewall inbound are all from user building external ip
     - [x] firewall outbound rules
@@ -231,9 +278,9 @@ packer build .
       - TLS certificates
       - Download the installer bootstrapper
 - [x] point dns name to public ip address
+- [x] install TFE
+- [x] create a TFE user organization and workspace to test the functionality
 
 
 
 # To do
-- [ ] install TFE
-- [ ] create a TFE user organization and workspace to test the functionality
