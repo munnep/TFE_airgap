@@ -14,3 +14,10 @@ variable "ami" {
   description = "Must be an Ubuntu image that is available in the region you choose"
 }
 
+variable "rds_password" {
+  description = "password for the RDS postgres database user"
+}
+
+variable "myownpublicip" {
+  description = "your own public up to connect to the internet"
+}
