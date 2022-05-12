@@ -67,9 +67,17 @@ resource "aws_security_group" "default-sg" {
   description = "${var.tag_prefix}-sg"
 
   ingress {
-    description = "https from internet"
+    description = "https from private ip"
     from_port   = 443
     to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["${var.myownpublicip}/32"]
+  }
+
+  ingress {
+    description = "ssh from private ip"
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["${var.myownpublicip}/32"]
   }
