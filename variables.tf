@@ -21,3 +21,23 @@ variable "rds_password" {
 variable "myownpublicip" {
   description = "your own public up to connect to the internet"
 }
+
+variable "filename_airgap" {
+  description = "filename of your airgap installation located under directory airgap"
+}
+
+variable "filename_license" {
+  description = "filename of your license located under directory airgap"
+}
+
+variable "filename_bootstrap" {
+  description = "filename of your bootstrap located under directory airgap"
+}
+
+variable "filename_certificate_private_key" {
+  description = "filename of your certificate_private_key located under directory airgap"
+}
+
+variable "filename_certificate_fullchain" {
+  description = "filename of your certificate_fullchain located under directory airgap"
+}

@@ -29,7 +29,7 @@ resource "aws_eip" "tfe-eip" {
   associate_with_private_ip = aws_network_interface.tfe-priv.private_ip
   depends_on                = [aws_internet_gateway.gw]
 
-    tags = {
+  tags = {
     Name = "${var.tag_prefix}-eip"
   }
 }
@@ -44,8 +44,8 @@ resource "aws_instance" "tfe_server" {
     device_index         = 0
   }
 
-iam_instance_profile = aws_iam_instance_profile.profile.name
-#   user_data = data.cloudinit_config.server_config.rendered
+  iam_instance_profile = aws_iam_instance_profile.profile.name
+  #   user_data = data.cloudinit_config.server_config.rendered
   tags = {
     Name = "${var.tag_prefix}-tfe"
   }
