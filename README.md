@@ -8,20 +8,20 @@ Install TFE on Prod version External Services ( S3 + DB ) with Valid Certificate
 # Done
 - [x] Create an AWS image to use with correct disk size and Docker software installed
 - [x] build network according to the diagram
+- [x] Create an AWS RDS PostgreSQL
+- [x] create a virtual machine in a public network with public IP address.
+    - [x] firewall inbound are all from user building external ip
+    - [x] firewall outbound rules
+          postgresql rds
+          AWS bucket
+          user building external ip
 
 # Steps to do
 
-- [ ] Create an AWS RDS PostgreSQL
 - [ ] Create an AWS bucket
 - [ ] Create a valid certificate to use 
 - [ ] Get an Airgap software download
 - [ ] create an elastic IP to attach to the instance
-- [ ] create a virtual machine in a public network with public IP address.
-    - [ ] firewall inbound are all from user building external ip
-    - [ ] firewall outbound rules
-          postgresql rds
-          AWS bucket
-          user building external ip
 - [ ] transfer files to TFE virtual machine
       - airgap software
       - license
