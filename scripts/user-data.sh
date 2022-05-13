@@ -1,12 +1,76 @@
 #!/bin/bash
-touch /tmp/script_has_run.txt 
 
-sudo apt-get update
-sudo apt install awscli -y
-
-
+# Download all the software and files needed
 aws s3 cp s3://${tag_prefix}-software/${filename_airgap} /tmp/${filename_airgap}
 aws s3 cp s3://${tag_prefix}-software/${filename_license} /tmp/${filename_license}
 aws s3 cp s3://${tag_prefix}-software/${filename_bootstrap} /tmp/${filename_bootstrap}
 aws s3 cp s3://${tag_prefix}-software/${filename_certificate_private_key} /tmp/${filename_certificate_private_key}
 aws s3 cp s3://${tag_prefix}-software/${filename_certificate_fullchain} /tmp/${filename_certificate_fullchain}
+
+# set the hostname
+sudo hostnamectl set-hostname ${dns_hostname}
+
+# directory for unzipping the file
+sudo mkdir /opt/tfe
+sudo mv /tmp/replicated.tar.gz /opt/tfe
+pushd /opt/tfe
+sudo tar xzf replicated.tar.gz
+
+
+cat > /tmp/tfe_settings.json <<EOF
+{
+   "aws_instance_profile": {
+        "value": "1"
+    },
+    "enc_password": {
+        "value": "${tfe_password}"
+    },
+    "hostname": {
+        "value": "${dns_hostname}.${dns_zonename}"
+    },
+    "pg_dbname": {
+        "value": "${pg_dbname}"
+    },
+    "pg_netloc": {
+        "value": "${pg_address}"
+    },
+    "pg_password": {
+        "value": "${rds_password}"
+    },
+    "pg_user": {
+        "value": "postgres"
+    },
+    "placement": {
+        "value": "placement_s3"
+    },
+    "production_type": {
+        "value": "external"
+    },
+    "s3_bucket": {
+        "value": "${tfe_bucket}"
+    },
+    "s3_endpoint": {},
+    "s3_region": {
+        "value": "${region}"
+    }
+}
+EOF
+
+
+# replicated.conf file
+cat > /etc/replicated.conf <<EOF
+{
+    "DaemonAuthenticationType":     "password",
+    "DaemonAuthenticationPassword": "${tfe_password}",
+    "TlsBootstrapType":             "server-path",
+    "TlsBootstrapHostname":         "${dns_hostname}.${dns_zonename}",
+    "TlsBootstrapCert":             "/tmp/${filename_certificate_fullchain}",
+    "TlsBootstrapKey":              "/tmp/${filename_certificate_private_key}",
+    "BypassPreflightChecks":        true,
+    "ImportSettingsFrom":           "/tmp/tfe_settings.json",
+    "LicenseFileLocation":          "/tmp/${filename_license}",
+    "LicenseBootstrapAirgapPackagePath": "/tmp/${filename_airgap}"
+}
+EOF
+
+sudo ./install.sh airgap private-address=${tfe-private-ip}
