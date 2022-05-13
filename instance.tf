@@ -12,16 +12,6 @@ resource "aws_network_interface_sg_attachment" "sg_attachment" {
   network_interface_id = aws_network_interface.tfe-priv.id
 }
 
-# data "cloudinit_config" "server_config" {
-#   gzip          = true
-#   base64_encode = true
-#   part {
-#     content_type = "text/cloud-config"
-#     content      = file("${path.module}/scripts/webserver.yml")
-#   }
-# }
-
-
 resource "aws_eip" "tfe-eip" {
   vpc = true
 
@@ -44,8 +34,23 @@ resource "aws_instance" "tfe_server" {
     device_index         = 0
   }
 
+  root_block_device {
+    volume_size = 50
+
+  }
+
+
   iam_instance_profile = aws_iam_instance_profile.profile.name
-  #   user_data = data.cloudinit_config.server_config.rendered
+
+  user_data = templatefile("${path.module}/scripts/user-data.sh", {
+    tag_prefix                       = var.tag_prefix
+    filename_airgap                  = var.filename_airgap
+    filename_license                 = var.filename_license
+    filename_bootstrap               = var.filename_bootstrap
+    filename_certificate_private_key = var.filename_certificate_private_key
+    filename_certificate_fullchain   = var.filename_certificate_fullchain
+  })
+
   tags = {
     Name = "${var.tag_prefix}-tfe"
   }
