@@ -10,3 +10,5 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 sudo apt-get update
 
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+sudo apt -y install awscli
