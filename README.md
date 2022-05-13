@@ -15,20 +15,20 @@ Install TFE on Prod version External Services ( S3 + DB ) with Valid Certificate
           postgresql rds
           AWS bucket
           user building external ip
-
-# Steps to do
-
-- [ ] Create an AWS bucket
-- [ ] Create a valid certificate to use 
-- [ ] Get an Airgap software download
-- [ ] create an elastic IP to attach to the instance
-- [ ] transfer files to TFE virtual machine
+- [x] Create an AWS bucket
+- [x] create an elastic IP to attach to the instance
+- [x] transfer files to TFE virtual machine
       - airgap software
       - license
       - TLS certificates
       - Download the installer bootstrapper
+- [x] install TFE
+
+# Steps to do
+
+- [ ] Create a valid certificate to use 
+- [ ] Get an Airgap software download
 - [ ] point dns name to public ip address
-- [ ] install TFE
 - [ ] create a TFE user organization and workspace to test the functionality
 
 
