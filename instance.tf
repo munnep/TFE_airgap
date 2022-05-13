@@ -26,7 +26,7 @@ resource "aws_eip" "tfe-eip" {
 
 resource "aws_instance" "tfe_server" {
   ami           = var.ami
-  instance_type = "t3.large"
+  instance_type = "t3.xlarge"
   key_name      = "patrick"
 
   network_interface {
@@ -49,6 +49,15 @@ resource "aws_instance" "tfe_server" {
     filename_bootstrap               = var.filename_bootstrap
     filename_certificate_private_key = var.filename_certificate_private_key
     filename_certificate_fullchain   = var.filename_certificate_fullchain
+    dns_hostname                     = var.dns_hostname
+    tfe-private-ip                   = cidrhost(cidrsubnet(var.vpc_cidr, 8, 1), 22)
+    tfe_password                     = var.tfe_password
+    dns_zonename                     = var.dns_zonename
+    pg_dbname                        = aws_db_instance.default.name
+    pg_address                       = aws_db_instance.default.address
+    rds_password                     = var.rds_password
+    tfe_bucket                       = "${var.tag_prefix}-bucket"
+    region                           = var.region
   })
 
   tags = {

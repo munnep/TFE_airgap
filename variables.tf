@@ -18,6 +18,10 @@ variable "rds_password" {
   description = "password for the RDS postgres database user"
 }
 
+variable "tfe_password" {
+  description = "password for tfe user"
+}
+
 variable "myownpublicip" {
   description = "your own public up to connect to the internet"
 }
@@ -40,4 +44,12 @@ variable "filename_certificate_private_key" {
 
 variable "filename_certificate_fullchain" {
   description = "filename of your certificate_fullchain located under directory airgap"
+}
+
+variable "dns_hostname" {
+  description = "DNS hostname"
+}
+
+variable "dns_zonename" {
+  description = "DNS zonename"
 }
