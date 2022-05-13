@@ -1,2 +1,3 @@
 *.airgap
 replicated.tar.gz
+*.pem
