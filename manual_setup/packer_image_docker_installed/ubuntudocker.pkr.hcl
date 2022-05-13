@@ -12,8 +12,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "ubuntudocker" {
-  ami_name      = "ubuntudocker"
+source "amazon-ebs" "ubuntudocker2" {
+  ami_name      = "ubuntudocker2"
   instance_type = "t3.small"
   region        = "${var.region}"
   source_ami_filter {
@@ -29,9 +29,9 @@ source "amazon-ebs" "ubuntudocker" {
 }
 
 build {
-  name    = "ubuntudocker"
+  name    = "ubuntudocker2"
   sources = [
-    "source.amazon-ebs.ubuntudocker",
+    "source.amazon-ebs.ubuntudocker2",
   ]
 
   provisioner "shell" {
