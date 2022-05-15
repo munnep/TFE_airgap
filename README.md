@@ -23,13 +23,11 @@ Install TFE on Prod version External Services ( S3 + DB ) with Valid Certificate
       - TLS certificates
       - Download the installer bootstrapper
 - [x] install TFE
+- [x] Create a valid certificate to use 
+- [x] Get an Airgap software download
+- [x] point dns name to public ip address
 
 # Steps to do
-
-- [ ] Create a valid certificate to use 
-- [ ] Get an Airgap software download
-- [ ] point dns name to public ip address
-- [ ] create a TFE user organization and workspace to test the functionality
 
 
 

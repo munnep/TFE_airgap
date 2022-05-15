@@ -53,3 +53,7 @@ variable "dns_hostname" {
 variable "dns_zonename" {
   description = "DNS zonename"
 }
+
+variable "certificate_email" {
+  description = "email address to register the certificate"
+}
