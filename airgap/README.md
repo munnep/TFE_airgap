@@ -1,3 +1,2 @@
 location for files used by the installation
 
-airgap sha256 checksum: sha256:14bcb25ccf2767f300df2c243258f2e8979b0bf2ab1c774b41107bf6172add0f
