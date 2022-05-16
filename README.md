@@ -48,7 +48,7 @@ We will be using AWS. Make sure you have the following
 See the following documentation [How to install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
 ## TLS certificate
-You need to have valid TLS certificates that can be used with the DNS name you will be using to contact the webserver.  
+You need to have valid TLS certificates that can be used with the DNS name you will be using to contact the TFE instance.  
   
 The repo assumes you have no certificates and want to create them using Let's Encrypt and that your DNS domain is managed under AWS. 
 
@@ -112,7 +112,8 @@ tfe_appplication = "https://patrick-tfe3.bg.hashicorp-success.com"
 tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 ```
 - Connect to the TFE dashboard. This could take 10 minutes before fully functioning
-
+![](media/20220516105301.png)   
+- Click on the open button to create your organization and workspaces
 
 
 
