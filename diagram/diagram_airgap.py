@@ -23,27 +23,34 @@ with Diagram(
 
     # Cluster 
     with Cluster("aws"):
-        bucket = SimpleStorageServiceS3Bucket("TFE bucket")
+        bucket_tfe = SimpleStorageServiceS3Bucket("TFE bucket")
+        bucket_files = SimpleStorageServiceS3Bucket("TFE airgap files")
         with Cluster("vpc"):
             igw_gateway = InternetGateway("igw")
     
             with Cluster("Availability Zone: eu-north-1b"):        
                 # Subcluster
                 with Cluster("subnet_private2"):
-                    postgresql2 = RDSPostgresqlInstance("RDS different AZ")
-            with Cluster("Availability Zone: eu-north-1a"):
+                        with Cluster("DB subnet"):
+                            postgresql2 = RDSPostgresqlInstance("RDS different AZ")
+                            
+            with Cluster("Availability Zone: eu-north-1a \n\n  "):
                 # Subcluster 
                 with Cluster("subnet_public1"):
                      ec2_tfe_server = EC2("TFE_server")
                 # Subcluster
                 with Cluster("subnet_private1"):
-                    postgresql = RDSPostgresqlInstance("RDS Instance")
+                    with Cluster("DB subnet"):
+                        postgresql = RDSPostgresqlInstance("RDS Instance")
     # Diagram
     user >> ec2_tfe_server 
 
-    bucket
+    user >> bucket_files 
+
+    bucket_tfe
 
     ec2_tfe_server >> [postgresql,
-                       bucket]
+                       bucket_tfe, 
+                       bucket_files]
 
 diag
