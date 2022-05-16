@@ -11,14 +11,13 @@ aws s3 cp s3://${tag_prefix}-software/private_key_pem /tmp/private_key_pem
 cat /tmp/certificate_pem >> /tmp/fullchain_pem
 cat /tmp/issuer_pem >> /tmp/fullchain_pem
 
-# set the hostname
-sudo hostnamectl set-hostname ${dns_hostname}
+# set the hostname: https://www.terraform.io/enterprise/before-installing#tls-certificate-and-private-key
+#sudo hostnamectl set-hostname ${dns_hostname}
 
-# directory for unzipping the file
-sudo mkdir /opt/tfe
-sudo mv /tmp/replicated.tar.gz /opt/tfe
+# directory for decompress the file
+sudo mkdir -p /opt/tfe
 pushd /opt/tfe
-sudo tar xzf replicated.tar.gz
+sudo tar xzf /tmp/replicated.tar.gz
 
 
 cat > /tmp/tfe_settings.json <<EOF
@@ -80,4 +79,4 @@ cat > /etc/replicated.conf <<EOF
 }
 EOF
 
-sudo ./install.sh airgap private-address=${tfe-private-ip}
+sudo bash ./install.sh airgap private-address=${tfe-private-ip}
