@@ -107,7 +107,7 @@ resource "aws_security_group" "default-sg" {
   }
 
   tags = {
-    Name = "${var.tag_prefix}-web_server_sg"
+    Name = "${var.tag_prefix}-tfe_sg"
   }
 }
 

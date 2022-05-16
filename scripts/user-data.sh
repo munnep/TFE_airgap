@@ -29,6 +29,9 @@ cat > /tmp/tfe_settings.json <<EOF
     "enc_password": {
         "value": "${tfe_password}"
     },
+    "hairpin_addressing": {
+        "value": "1"
+    },
     "hostname": {
         "value": "${dns_hostname}.${dns_zonename}"
     },
