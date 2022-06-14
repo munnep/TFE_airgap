@@ -131,7 +131,6 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 # TODO
 - [ ] adding authorized keys in a terraform way
 - [ ] modify to use faster disks
-- [ ] install docker before running airgap
 - [ ] DNS name for the terraform client
 - [ ] TFE_PARALLELISM for the workspaces [TFE_PARALLELISM](https://www.terraform.io/cloud-docs/workspaces/variables#parallelism)
 - [ ] more damage in the container. More resource creation and check OOM-kill
@@ -139,6 +138,7 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 
 # Done
 - [x] add docker disk
+- [x] install docker before running airgap
 - [x] Create an AWS image to use with correct disk size and Docker software installed
 - [x] build network according to the diagram
 - [x] use standard ubuntu 
