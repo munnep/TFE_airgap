@@ -321,16 +321,23 @@ resource "aws_eip" "tfe-eip" {
 resource "aws_ebs_volume" "tfe_swap" {
   availability_zone = local.az1
   size              = 32
-  type              = "gp2"
-  # iops              = 1000
+  # default is the gp2 disk
+  # type              = "gp2"
+  # faster disks is the IOPS version
+  type = "io2"
+  iops              = 1000
 }
 
 resource "aws_ebs_volume" "tfe_docker" {
   availability_zone = local.az1
   size              = 100
-  type              = "gp2"
-  # iops              = 2000
+  # default is the gp2 disk
+  # type              = "gp2"
+  # faster disks is the IOPS version
+  type = "io2"
+  iops              = 2000
 }
+
 
 resource "aws_instance" "tfe_server" {
   ami           = var.ami

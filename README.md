@@ -17,13 +17,6 @@ The Terraform code will do the following steps
 
 # Prerequisites
 
-## AMI image used for the TFE installation
-Create an AMI image of an Ubuntu 20.04 with the following installed software
-    - Latest docker software
-    - Latest AWS cli 
-
-This repository has a packer script that can be used. Please follow this document [here](./packer_image_docker_installed/README.md)
-
 ## License
 Make sure you have a TFE license available for use
 
@@ -117,26 +110,15 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # TODO
 - [ ] adding authorized keys in a terraform way
-- [ ] modify to use faster disks
 - [ ] DNS name for the terraform client
 - [ ] TFE_PARALLELISM for the workspaces [TFE_PARALLELISM](https://www.terraform.io/cloud-docs/workspaces/variables#parallelism)
 - [ ] more damage in the container. More resource creation and check OOM-kill
 - [ ] remove swap and run again. See the OOM-kill
 
 # Done
+- [x] modify to use faster disks
 - [x] add docker disk
 - [x] install docker before running airgap
 - [x] Create an AWS image to use with correct disk size and Docker software installed
