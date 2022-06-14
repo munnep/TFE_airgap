@@ -112,12 +112,12 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 
 # TODO
 - [ ] adding authorized keys in a terraform way
-- [ ] DNS name for the terraform client
 - [ ] TFE_PARALLELISM for the workspaces [TFE_PARALLELISM](https://www.terraform.io/cloud-docs/workspaces/variables#parallelism)
 - [ ] more damage in the container. More resource creation and check OOM-kill
 - [ ] remove swap and run again. See the OOM-kill
 
 # Done
+- [x] DNS name for the terraform client
 - [x] modify to use faster disks
 - [x] add docker disk
 - [x] install docker before running airgap
