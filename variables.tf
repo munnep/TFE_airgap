@@ -22,9 +22,9 @@ variable "tfe_password" {
   description = "password for tfe user"
 }
 
-variable "myownpublicip" {
-  description = "your own public up to connect to the internet"
-}
+# variable "myownpublicip" {
+#   description = "your own public up to connect to the internet"
+# }
 
 variable "filename_airgap" {
   description = "filename of your airgap installation located under directory airgap"

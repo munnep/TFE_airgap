@@ -1,3 +1,13 @@
+data "http" "myip" {
+  url = "https://api.ipify.org"
+}
+
+# data.http.myip.body
+
+locals {
+  mypublicip = data.http.myip.body
+}
+
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
 
@@ -9,7 +19,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 1)
-  availability_zone = "${var.region}a"
+  availability_zone = local.az1
   tags = {
     Name = "${var.tag_prefix}-public"
   }
@@ -18,7 +28,7 @@ resource "aws_subnet" "public1" {
 resource "aws_subnet" "private1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 11)
-  availability_zone = "${var.region}a"
+  availability_zone = local.az1
   tags = {
     Name = "${var.tag_prefix}-private"
   }
@@ -27,7 +37,7 @@ resource "aws_subnet" "private1" {
 resource "aws_subnet" "private2" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 12)
-  availability_zone = "${var.region}b"
+  availability_zone = local.az2
   tags = {
     Name = "${var.tag_prefix}-private"
   }
@@ -71,7 +81,15 @@ resource "aws_security_group" "default-sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["${var.myownpublicip}/32"]
+    cidr_blocks = ["${local.mypublicip}/32", "0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "netdata listening"
+    from_port   = 19999
+    to_port     = 19999
+    protocol    = "tcp"
+    cidr_blocks = ["${local.mypublicip}/32", "0.0.0.0/0"]
   }
 
   ingress {
@@ -79,7 +97,7 @@ resource "aws_security_group" "default-sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.myownpublicip}/32"]
+    cidr_blocks = ["${local.mypublicip}/32", "0.0.0.0/0"]
   }
 
   ingress {
@@ -87,7 +105,7 @@ resource "aws_security_group" "default-sg" {
     from_port   = 8800
     to_port     = 8800
     protocol    = "tcp"
-    cidr_blocks = ["${var.myownpublicip}/32"]
+    cidr_blocks = ["${local.mypublicip}/32", "0.0.0.0/0"]
   }
 
   ingress {
@@ -143,7 +161,7 @@ resource "aws_s3_object" "object_license" {
   key    = var.filename_license
   source = "airgap/${var.filename_license}"
 
-    depends_on = [
+  depends_on = [
     aws_s3_bucket.tfe-bucket-software
   ]
 
@@ -154,7 +172,7 @@ resource "aws_s3_object" "object_bootstrap" {
   key    = var.filename_bootstrap
   source = "airgap/${var.filename_bootstrap}"
 
-    depends_on = [
+  depends_on = [
     aws_s3_bucket.tfe-bucket-software
   ]
 }
@@ -300,6 +318,20 @@ resource "aws_eip" "tfe-eip" {
   }
 }
 
+resource "aws_ebs_volume" "tfe_swap" {
+  availability_zone = local.az1
+  size              = 32
+  type              = "gp2"
+  # iops              = 1000
+}
+
+resource "aws_ebs_volume" "tfe_docker" {
+  availability_zone = local.az1
+  size              = 100
+  type              = "gp2"
+  # iops              = 2000
+}
+
 resource "aws_instance" "tfe_server" {
   ami           = var.ami
   instance_type = "t3.xlarge"
@@ -319,28 +351,40 @@ resource "aws_instance" "tfe_server" {
   iam_instance_profile = aws_iam_instance_profile.profile.name
 
   user_data = templatefile("${path.module}/scripts/user-data.sh", {
-    tag_prefix                       = var.tag_prefix
-    filename_airgap                  = var.filename_airgap
-    filename_license                 = var.filename_license
-    filename_bootstrap               = var.filename_bootstrap
-    dns_hostname                     = var.dns_hostname
-    tfe-private-ip                   = cidrhost(cidrsubnet(var.vpc_cidr, 8, 1), 22)
-    tfe_password                     = var.tfe_password
-    dns_zonename                     = var.dns_zonename
-    pg_dbname                        = aws_db_instance.default.name
-    pg_address                       = aws_db_instance.default.address
-    rds_password                     = var.rds_password
-    tfe_bucket                       = "${var.tag_prefix}-bucket"
-    region                           = var.region
+    tag_prefix         = var.tag_prefix
+    filename_airgap    = var.filename_airgap
+    filename_license   = var.filename_license
+    filename_bootstrap = var.filename_bootstrap
+    dns_hostname       = var.dns_hostname
+    tfe-private-ip     = cidrhost(cidrsubnet(var.vpc_cidr, 8, 1), 22)
+    tfe_password       = var.tfe_password
+    dns_zonename       = var.dns_zonename
+    pg_dbname          = aws_db_instance.default.name
+    pg_address         = aws_db_instance.default.address
+    rds_password       = var.rds_password
+    tfe_bucket         = "${var.tag_prefix}-bucket"
+    region             = var.region
   })
 
   tags = {
     Name = "${var.tag_prefix}-tfe"
   }
-  
-   depends_on = [
+
+  depends_on = [
     aws_network_interface_sg_attachment.sg_attachment, aws_db_instance.default
   ]
+}
+
+resource "aws_volume_attachment" "ebs_att_tfe_swap" {
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.tfe_swap.id
+  instance_id = aws_instance.tfe_server.id
+}
+
+resource "aws_volume_attachment" "ebs_att_tfe_docker" {
+  device_name = "/dev/sdi"
+  volume_id   = aws_ebs_volume.tfe_docker.id
+  instance_id = aws_instance.tfe_server.id
 }
 
 resource "aws_db_subnet_group" "default" {
