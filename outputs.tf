@@ -2,7 +2,7 @@ output "ssh_tfe_server" {
   value = "ssh ubuntu@${var.dns_hostname}.${var.dns_zonename}"
 }
 
-output "ssh_tfe_client" {
+output "ssh_tf_client" {
   value = "ssh ubuntu@${var.dns_hostname}-client.${var.dns_zonename}"
 }
 
