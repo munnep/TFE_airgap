@@ -38,17 +38,21 @@ with Diagram(
                 # Subcluster 
                 with Cluster("subnet_public1"):
                      ec2_tfe_server = EC2("TFE_server")
+                     ec2_tf_client = EC2("TF_client")
                 # Subcluster
                 with Cluster("subnet_private1"):
                     with Cluster("DB subnet"):
                         postgresql = RDSPostgresqlInstance("RDS Instance")
     # Diagram
-    user >> ec2_tfe_server 
 
     user >> bucket_files 
 
     bucket_tfe
-
+    
+    user >> ec2_tf_client
+    
+    user >> ec2_tfe_server
+     
     ec2_tfe_server >> [postgresql,
                        bucket_tfe, 
                        bucket_files]
