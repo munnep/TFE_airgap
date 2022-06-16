@@ -10,19 +10,13 @@ The Terraform code will do the following steps
 - Create a VPC network with subnets, security groups, internet gateway
 - Create a RDS PostgreSQL to be used by TFE
 - Create a EC2 instance on which the TFE airgap installation will be performed
+- Create an EC2 instance on which a Terraform client is installed that you can use to run your code
 
 # Diagram
 
 ![](diagram/diagram-airgap.png)  
 
 # Prerequisites
-
-## AMI image used for the TFE installation
-Create an AMI image of an Ubuntu 20.04 with the following installed software
-    - Latest docker software
-    - Latest AWS cli 
-
-This repository has a packer script that can be used. Please follow this document [here](./packer_image_docker_installed/README.md)
 
 ## License
 Make sure you have a TFE license available for use
@@ -70,24 +64,23 @@ export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 export AWS_SESSION_TOKEN=
 ```
-- Create the AMI image to be used for the EC2 instance
-This repository has a packer script that can be used. Please follow this document [here](./packer_image_docker_installed/README.md) 
 - Store the files needed for the TFE Airgap installation under the `./airgap` directory, See the notes [here](./airgap/README.md)
 - create a file called `variables.auto.tfvars` with the following contents and your own values
 ```
-tag_prefix                       = "patrick-airgap"              # TAG prefix for names to easily find your AWS resources
-region                           = "eu-north-1"                  # Region to create the environment
-vpc_cidr                         = "10.234.0.0/16"               # subnet mask that can be used 
-ami                              = "ami-07ba6392073c589a7"       # AMI of the image build with packer 
-rds_password                     = "Passw0rd#1"                  # password used for the RDS environment
-myownpublicip                    = "163.158.133.122"             # Your own public IP to connect to the TFE environment
-filename_airgap                  = "610.airgap"                  # filename of your airgap software stored under ./airgap
-filename_license                 = "license.rli"                 # filename of your TFE license stored under ./airgap
-filename_bootstrap               = "replicated.tar.gz"           # filename of the bootstrap installer stored under ./airgap
-dns_hostname                     = "patrick-tfe3"                # DNS hostname for the TFE
-dns_zonename                     = "bg.hashicorp-success.com"    # DNS zone name to be used
-tfe_password                     = "Passw0rd#1"                  # TFE password for the dashboard and encryption of the data 
-certificate_email                = "patrick.munne@hashicorp.com" # Your email address used by TLS certificate registration
+tag_prefix               = "patrick-airgap2"                          # TAG prefix for names to easily find your AWS resources
+region                   = "eu-north-1"                               # Region to create the environment
+vpc_cidr                 = "10.234.0.0/16"                            # subnet mask that can be used 
+ami                      = "ami-09f0506c9ef0fb473"                    # AMI of the Ubuntu image  
+rds_password             = "Password#1"                               # password used for the RDS environment
+filename_airgap          = "610.airgap"                               # filename of your airgap software stored under ./airgap
+filename_license         = "license.rli"                              # filename of your TFE license stored under ./airgap
+filename_bootstrap       = "replicated.tar.gz"                        # filename of the bootstrap installer stored under ./airgap
+dns_hostname             = "patrick-tfe6"                             # DNS hostname for the TFE
+dns_zonename             = "bg.hashicorp-success.com"                 # DNS zone name to be used
+tfe_password             = "Password#1"                               # TFE password for the dashboard and encryption of the data
+certificate_email        = "patrick.munne@hashicorp.com"              # Your email address used by TLS certificate registration
+terraform_client_version = "1.1.7"                                    # Terraform version you want to have installed on the client machine
+public_key               = "ssh-rsa AAAAB3Nza"                        # The public key for you to connect to the server over SSH
 ```
 - Terraform initialize
 ```
@@ -101,15 +94,16 @@ terraform plan
 ```
 terraform apply
 ```
-- Terraform output should create 30 resources and show you the public dns string you can use to connect to the TFE instance
+- Terraform output should create 40 resources and show you the public dns string you can use to connect to the TFE instance
 ```
-Apply complete! Resources: 30 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 40 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-ssh_server = "ssh ubuntu@13.50.8.246"
-tfe_appplication = "https://patrick-tfe3.bg.hashicorp-success.com"
-tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
+ssh_tf_client = "ssh ubuntu@patrick-tfe6-client.bg.hashicorp-success.com"
+ssh_tfe_server = "ssh ubuntu@patrick-tfe6.bg.hashicorp-success.com"
+tfe_appplication = "https://patrick-tfe6.bg.hashicorp-success.com"
+tfe_dashboard = "https://patrick-tfe6.bg.hashicorp-success.com:8800"
 ```
 - Connect to the TFE dashboard. This could take 10 minutes before fully functioning
 ![](media/20220516105301.png)   
@@ -117,21 +111,19 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+# TODO
 
 # Done
-- [x] Create an AWS image to use with correct disk size and Docker software installed
+- [x] adding authorized keys in a terraform way. I can do one key with terraform. You are only allowed to add one key a key pair. I tried
+- [x] TFE_PARALLELISM for the workspaces [TFE_PARALLELISM](https://www.terraform.io/cloud-docs/workspaces/variables#parallelism) [TFE workload repository here](https://github.com/munnep/tfe_workload)
+- [x] more damage in the container. More resource creation and check OOM-kill [TFE workload repository here](https://github.com/munnep/tfe_workload)
+- [x] remove swap and run again. See the OOM-kill [TFE workload repository here](https://github.com/munnep/tfe_workload)
+- [x] DNS name for the terraform client
+- [x] modify to use faster disks
+- [x] add docker disk
+- [x] install docker before running airgazp
 - [x] build network according to the diagram
+- [x] use standard ubuntu 
 - [x] Create an AWS RDS PostgreSQL
 - [x] create a virtual machine in a public network with public IP address.
     - [x] firewall inbound are all from user building external ip
@@ -151,7 +143,14 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 - [x] Get an Airgap software download
 - [x] point dns name to public ip address
 
-# Steps to do
+
+
 
 # notes and links
 [EC2 AWS bucket access](https://aws.amazon.com/premiumsupport/knowledge-center/ec2-instance-access-s3-bucket/)
+
+
+
+
+
+

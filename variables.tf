@@ -18,12 +18,13 @@ variable "rds_password" {
   description = "password for the RDS postgres database user"
 }
 
-variable "tfe_password" {
-  description = "password for tfe user"
+variable "public_key" {
+  type        = string
+  description = "public to use on the instances"
 }
 
-variable "myownpublicip" {
-  description = "your own public up to connect to the internet"
+variable "tfe_password" {
+  description = "password for tfe user"
 }
 
 variable "filename_airgap" {
@@ -38,13 +39,9 @@ variable "filename_bootstrap" {
   description = "filename of your bootstrap located under directory airgap"
 }
 
-# variable "filename_certificate_private_key" {
-#   description = "filename of your certificate_private_key located under directory airgap"
-# }
-
-# variable "filename_certificate_fullchain" {
-#   description = "filename of your certificate_fullchain located under directory airgap"
-# }
+variable "terraform_client_version" {
+  description = "Terraform client installed on the terraform client machine"
+}
 
 variable "dns_hostname" {
   description = "DNS hostname"
