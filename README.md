@@ -112,16 +112,15 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 
 # TODO
 - [ ] adding authorized keys in a terraform way
-- [ ] TFE_PARALLELISM for the workspaces [TFE_PARALLELISM](https://www.terraform.io/cloud-docs/workspaces/variables#parallelism)
-- [ ] more damage in the container. More resource creation and check OOM-kill
-- [ ] remove swap and run again. See the OOM-kill
 
 # Done
+- [x] TFE_PARALLELISM for the workspaces [TFE_PARALLELISM](https://www.terraform.io/cloud-docs/workspaces/variables#parallelism) [TFE workload repository here](https://github.com/munnep/tfe_workload)
+- [x] more damage in the container. More resource creation and check OOM-kill [TFE workload repository here](https://github.com/munnep/tfe_workload)
+- [x] remove swap and run again. See the OOM-kill [TFE workload repository here](https://github.com/munnep/tfe_workload)
 - [x] DNS name for the terraform client
 - [x] modify to use faster disks
 - [x] add docker disk
 - [x] install docker before running airgap
-- [x] Create an AWS image to use with correct disk size and Docker software installed
 - [x] build network according to the diagram
 - [x] use standard ubuntu 
 - [x] Create an AWS RDS PostgreSQL
@@ -148,3 +147,9 @@ tfe_dashboard = "https://patrick-tfe3.bg.hashicorp-success.com:8800"
 
 # notes and links
 [EC2 AWS bucket access](https://aws.amazon.com/premiumsupport/knowledge-center/ec2-instance-access-s3-bucket/)
+
+
+
+
+
+

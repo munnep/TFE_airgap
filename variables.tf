@@ -18,6 +18,11 @@ variable "rds_password" {
   description = "password for the RDS postgres database user"
 }
 
+variable "public_key" {
+  type        = string
+  description = "public to use on the instances"
+}
+
 variable "tfe_password" {
   description = "password for tfe user"
 }

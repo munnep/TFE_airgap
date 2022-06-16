@@ -1,5 +1,9 @@
-output "ssh_server" {
-  value = "ssh ubuntu@${aws_eip.tfe-eip.public_ip}"
+output "ssh_tfe_server" {
+  value = "ssh ubuntu@${var.dns_hostname}.${var.dns_zonename}"
+}
+
+output "ssh_tfe_client" {
+  value = "ssh ubuntu@${var.dns_hostname}-client.${var.dns_zonename}"
 }
 
 output "tfe_dashboard" {

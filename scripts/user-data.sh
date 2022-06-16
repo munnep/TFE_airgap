@@ -5,7 +5,6 @@
 # Second is Patrick
 cat >> /home/ubuntu/.ssh/authorized_keys <<EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDBzMaSE9ORQsJoIi+UrMQ+U8WFSpiYFXIKSvqFWbqyhpEM6MSoidX09CuvYIVPMtTeZZj/ZO+o+nL0TffIDNzkGgalhdlw5RL9OgJXgmUNWjW4VwIoR96D7TcP6EUyXkD0wxSgjryJSn4aONR3tIIYvHdM9YjRrivLlS/N7WzIRM6xvWJ8UK7fVYdD3V6FMp4+a33Uc+Ezk8XPWCvDt5vXluFPiKa8RlU7XXqPqI2bR89VJ5cpCnZorVtjVVlvgtOFdY/5hT7qqX1hxQyARkSLcnJiVylL3H3arDlnT/6nO71WY2/ZfyVUbQqcTC12UpFSJRH7JRCgf0stTdfzugCsq61XCMkZBfZ2OTBWeO8Qm2yDW7d4NwzKj31xKqDxT3sr7Gz6qiJO0XhaEjgBSAFB41hVDaNR8Fa6Ir1DObVQ+QsHOv4m2xhh8XxLaZZh30KWZNFAxVmeXoec0paDuj53UTM/ddhbKQr+8vPkbdlR4p5hxSSoVH+SBNLmGY4+K+0= kikitux@kikitux-C02ZR1GLLVDM
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX6Lfd55bPSMPJJvHoF4+3iGNLuJ1gz3Ov9uVnsWFCy6rcFk8IDhjFGRoTylXyJVns6CpFxonKZ2tcKFkSK3601sztrbJNzlgpJg/WoX7wbTy3SgLVhK8xpYBCh/LfX6UvofVBO1OVo2lkv2mFNgn5S3q9dKqUc32bRvWaoPqeuSUghvDsB9SxMr1Ih5Qg3IWYk587dCkVMrL3KMiN361qEkGcfu3kkpcQnpAO00alXJ2WksvQbut3w1vP2/osuoavA6Z22WjzicPIqwV1yQfNjdxj+XjZ1Re3TQ4kwA1h5AAsYko4LyIUjP1ZiBTTej9k2Yodl+VO2a1AypPrLcdN
 EOF
 
 # wait until archive is available. Wait until there is internet before continue
@@ -29,7 +28,7 @@ fi
 
 # heavy swap vm.swappiness=80
 # no swap vm.swappiness=1
-sysctl vm.swappiness=80
+sysctl vm.swappiness=1
 sysctl vm.min_free_kbytes=67584
 sysctl vm.drop_caches=1
 # make it permanent over server reboots
@@ -86,7 +85,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Netdata will be listening on port 19999
-curl -sL https://raw.githubusercontent.com/kikitux/curl-bash/master/provision/netdata.sh | bash
+curl -sL https://raw.githubusercontent.com/automodule/bash/main/install_netdata.sh | bash
 
 # install requirements for tfe
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -171,9 +170,5 @@ cat > /etc/replicated.conf <<EOF
     "LicenseBootstrapAirgapPackagePath": "/tmp/${filename_airgap}"
 }
 EOF
-
-# installing docker
-
-
 
 sudo bash ./install.sh airgap private-address=${tfe-private-ip}

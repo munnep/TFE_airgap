@@ -325,7 +325,7 @@ resource "aws_ebs_volume" "tfe_swap" {
   # type              = "gp2"
   # faster disks is the IOPS version
   type = "io2"
-  iops              = 1000
+  iops = 1000
 }
 
 resource "aws_ebs_volume" "tfe_docker" {
@@ -335,14 +335,18 @@ resource "aws_ebs_volume" "tfe_docker" {
   # type              = "gp2"
   # faster disks is the IOPS version
   type = "io2"
-  iops              = 2000
+  iops = 2000
 }
 
+resource "aws_key_pair" "default-key" {
+  key_name   = "${var.tag_prefix}-key"
+  public_key = var.public_key
+}
 
 resource "aws_instance" "tfe_server" {
   ami           = var.ami
   instance_type = "t3.xlarge"
-  key_name      = "patrick"
+  key_name      = "${var.tag_prefix}-key"
 
   network_interface {
     network_interface_id = aws_network_interface.tfe-priv.id
@@ -395,7 +399,7 @@ resource "aws_volume_attachment" "ebs_att_tfe_docker" {
 }
 
 resource "aws_db_subnet_group" "default" {
-  name       = "main"
+  name       = "${var.tag_prefix}-main"
   subnet_ids = [aws_subnet.private1.id, aws_subnet.private2.id]
 
   tags = {
