@@ -1,5 +1,12 @@
 #!/bin/bash
 
+
+# wait until archive is available. Wait until there is internet before continue
+until ping -c1 archive.ubuntu.com &>/dev/null; do
+ echo "waiting for networking to initialise"
+ sleep 3 
+done 
+
 # TODO: make this in a terraform way
 
 # add ssh key alvaro
@@ -8,11 +15,6 @@ curl -sL https://raw.githubusercontent.com/kikitux/curl-bash/master/provision/ad
 # add ssh key patrick
 curl -sL https://raw.githubusercontent.com/kikitux/curl-bash/master/provision/add_github_user_public_keys.sh | GITHUB_USER=munnep bash
 
-# wait until archive is available. Wait until there is internet before continue
-until ping -c1 archive.ubuntu.com &>/dev/null; do
- echo "waiting for networking to initialise"
- sleep 3 
-done 
 
 # install monitoring tools
 apt-get update
