@@ -35,20 +35,14 @@ sysctl vm.swappiness=1
 sysctl vm.min_free_kbytes=67584
 sysctl vm.drop_caches=1
 # make it permanent over server reboots
-echo vm.swappiness=80 >> /etc/sysctl.conf
+echo vm.swappiness=1 >> /etc/sysctl.conf
 echo vm.min_free_kbytes=67584 >> /etc/sysctl.conf
 
+SWAP=/dev/$(lsblk|grep nvme | grep -v nvme0n1 |sort -k 4 | awk '{print $1}'| awk '(NR==1)')
+DOCKER=/dev/$(lsblk|grep nvme | grep -v nvme0n1 |sort -k 4 | awk '{print $1}'| awk '(NR==2)')
 
-# we get a list of disk
-DISKS=($(lsblk  -p -I 259 -n -o SIZE | tail +3 | tr -d 'G'))
-
-if [ $${DISKS[1]} -gt $${DISKS[0]} ]; then
-	SWAP="/dev/nvme1n1"
-	DOCKER="/dev/nvme2n1"
-else
-	SWAP="/dev/nvme2n1"
-	DOCKER="/dev/nvme1n1"
-fi
+echo $SWAP
+echo $DOCKER
 
 # swap
 # if SWAP exists
@@ -62,9 +56,10 @@ fi
 
 # if SWAP not in fstab
 # we add it
-grep "$SWAP" /etc/fstab
+grep "swap" /etc/fstab
 if [ $? -ne 0 ]; then
-	echo "$SWAP swap swap defaults 0 0" | tee -a /etc/fstab
+  SWAP_UUID=`blkid $SWAP| awk '{print $2}'`
+	echo "$SWAP_UUID swap swap defaults 0 0" | tee -a /etc/fstab
 	swapon -a
 fi
 
@@ -80,9 +75,10 @@ fi
 
 # if DOCKER not in fstab
 # we add it
-grep "$DOCKER" /etc/fstab
+grep "/var/lib/docker" /etc/fstab
 if [ $? -ne 0 ]; then
-	echo "$DOCKER /var/lib/docker xfs defaults 0 0" | tee -a /etc/fstab
+  DOCKER_UUID=`blkid $DOCKER| awk '{print $2}'`
+	echo "$DOCKER_UUID /var/lib/docker xfs defaults 0 0" | tee -a /etc/fstab
 	mkdir -p /var/lib/docker
 	mount -a
 fi

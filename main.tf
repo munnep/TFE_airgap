@@ -130,7 +130,8 @@ resource "aws_security_group" "default-sg" {
 }
 
 resource "aws_s3_bucket" "tfe-bucket" {
-  bucket = "${var.tag_prefix}-bucket"
+  bucket        = "${var.tag_prefix}-bucket"
+  force_destroy = true
 
   tags = {
     Name = "${var.tag_prefix}-bucket"
@@ -138,8 +139,8 @@ resource "aws_s3_bucket" "tfe-bucket" {
 }
 
 resource "aws_s3_bucket" "tfe-bucket-software" {
-  bucket = "${var.tag_prefix}-software"
-
+  bucket        = "${var.tag_prefix}-software"
+  force_destroy = true
   tags = {
     Name = "${var.tag_prefix}-software"
   }
@@ -177,10 +178,10 @@ resource "aws_s3_object" "object_bootstrap" {
   ]
 }
 
-resource "aws_s3_bucket_acl" "tfe-bucket" {
-  bucket = aws_s3_bucket.tfe-bucket.id
-  acl    = "private"
-}
+# resource "aws_s3_bucket_acl" "tfe-bucket" {
+#   bucket = aws_s3_bucket.tfe-bucket.id
+#   acl    = "private"
+# }
 
 resource "aws_iam_role" "role" {
   name = "${var.tag_prefix}-role"
@@ -370,7 +371,7 @@ resource "aws_instance" "tfe_server" {
     tfe-private-ip     = cidrhost(cidrsubnet(var.vpc_cidr, 8, 1), 22)
     tfe_password       = var.tfe_password
     dns_zonename       = var.dns_zonename
-    pg_dbname          = aws_db_instance.default.name
+    pg_dbname          = aws_db_instance.default.db_name
     pg_address         = aws_db_instance.default.address
     rds_password       = var.rds_password
     tfe_bucket         = "${var.tag_prefix}-bucket"
@@ -411,7 +412,7 @@ resource "aws_db_instance" "default" {
   allocated_storage      = 10
   engine                 = "postgres"
   engine_version         = "12"
-  instance_class         = "db.t3.large"
+  instance_class         = "db.t3.xlarge"
   username               = "postgres"
   password               = var.rds_password
   parameter_group_name   = "default.postgres12"
